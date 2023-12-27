@@ -6,7 +6,7 @@ use std::error::Error;
 use std::env;
 use std::process;
 
-// read chars from file ([a-z][A-Z][0-9][#!])
+// read chars from file ([a-z][A-Z][0-9])
 fn read_chars_from_file(path: &str) -> Result<Vec<char>, Box<dyn Error>> {
     let path = Path::new(path);
     let file = match File::open(&path) {
@@ -26,18 +26,17 @@ fn read_chars_from_file(path: &str) -> Result<Vec<char>, Box<dyn Error>> {
     }
     return Ok(result);
 }
-fn create_wg_password(characters: Vec<char>) -> String {
-    let pwd_len = 10;
-    let mut result: String = String::new();
-    for _i in 0..pwd_len {
-        result.push(characters[rand::thread_rng().gen_range(0..=pwd_len)])
-    }
-    return result;
-}
 fn create_token() -> String {
     let mut result = String::new();
     for _i in 0..10 {
         result.push((rand::thread_rng().gen_range(65..=90) as u8) as char);
+    }
+    return result;
+}
+fn create_wg_password(characters: Vec<char>) -> String {
+    let mut result: String = String::new();
+    for _i in 0..10 {
+        result.push(characters[rand::thread_rng().gen_range(0..characters.len())])
     }
     return result;
 }
@@ -48,7 +47,7 @@ fn main() {
 
     if args.len() < 2 {
         eprintln!("Error: user missing");
-        process::exit(1); 
+        process::exit(1);
     }
 
     loop {
